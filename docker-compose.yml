@@ -1,0 +1,51 @@
+version: "3"
+services:
+  streamlit1:
+    env_file: ./st1/.env.development
+    # restart: always
+    build:
+      context: ./st1
+      dockerfile: Dockerfile
+    container_name: streamlit1
+    working_dir: /usr/src/app/st1
+    image: streamlit1
+    networks:
+      - shared-nw
+    ports:
+      - 8501:8501
+    volumes:
+      - ./st1/src:/usr/src/app/st1/src
+    command: streamlit run src/01_page1.py --server.address=streamlit1 --server.port=8501
+
+  streamlit2:
+    env_file: ./st2/.env.development
+    # restart: always
+    build:
+      context: ./st2
+      dockerfile: Dockerfile
+    container_name: streamlit2
+    working_dir: /usr/src/app/st2
+    image: streamlit2
+    networks:
+      - shared-nw
+    ports:
+      - 8502:8502
+    volumes:
+      - ./st2/src:/usr/src/app/st2/src
+    command: streamlit run src/01_page1.py --server.address=streamlit2 --server.port=8502
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx00
+    networks:
+      shared-nw:
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - streamlit1
+      - streamlit2
+networks:
+  shared-nw:
+    driver: bridge
