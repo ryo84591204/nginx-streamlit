@@ -13,7 +13,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build ./st1 -t $REPOSITORY_URI:latest .
+      - docker build -t $REPOSITORY_URI:latest ./st1
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
@@ -25,4 +25,3 @@ phases:
       - printf '[{"name":"streamlit1","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
     files: imagedefinitions.json
-    
